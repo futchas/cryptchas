@@ -1,0 +1,16 @@
+
+# Build Files #
+
+build/
+.gradle
+
+
+# IntelliJ IDEA Files #
+
+*.iml
+.idea
+
+
+# Spring Bootstrap artifacts
+
+out
