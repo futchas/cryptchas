@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service
 class HistoricalPricesService {
     private val logger = LoggerFactory.getLogger(javaClass::class.java)
 
-    fun getMessage(btcToUsdPrices: HistoricalPrices) : String {
+    fun getMessage(btcToUsdPrices: HistoricalPrices): String {
         val percentageThreshold = 5
 
         val minPrice = btcToUsdPrices.closePrices.min()
         val maxPrice = btcToUsdPrices.closePrices.max()
 
-        if(minPrice != null && maxPrice != null) {
+        if (minPrice != null && maxPrice != null) {
 
             val priceDifference = maxPrice - minPrice
             val percentageDifference = priceDifference / minPrice * 100

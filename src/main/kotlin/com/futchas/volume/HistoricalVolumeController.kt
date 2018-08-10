@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class HistoricalVolumeController (private val restTemplate: RestTemplate) {
+class HistoricalVolumeController(private val restTemplate: RestTemplate) {
 
     private val logger = LoggerFactory.getLogger(HistoricalVolumeController::class.java)
     @Autowired
@@ -23,7 +23,7 @@ class HistoricalVolumeController (private val restTemplate: RestTemplate) {
     lateinit var scheduledExecutorService: ScheduledExecutorService
 
     @Autowired
-    lateinit var service : HistoricalVolumesService
+    lateinit var service: HistoricalVolumesService
 
     private fun sendUpdateToClient(): Runnable {
 
@@ -39,20 +39,19 @@ class HistoricalVolumeController (private val restTemplate: RestTemplate) {
 
             val volumeDifference = service.getVolumeDifference(globalVolumes1h, globalVolumes24h)
 
-            val message : String = if(service.isUnusualVolume(volumeDifference))
-                                        "Unusual volume difference at: $volumeDifference%"
-                                    else
-                                        "Volume difference at $volumeDifference%"
+            val message: String = if (service.isUnusualVolume(volumeDifference))
+                "Unusual volume difference at: $volumeDifference%"
+            else
+                "Volume difference at $volumeDifference%"
 
-            messagingTemplate.convertAndSend("/topic/updates", message)
+            messagingTemplate.convertAndSend("/notifier/updates", message)
         }
     }
 
     @MessageMapping("/volumes")
 //    @GetMapping("/volumes")
     fun volumes() {
-//        scheduledFuture = taskScheduler.scheduleAtFixedRate(sendUpdateToClient(), 5000)
-            scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 5, TimeUnit.SECONDS)
+        scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 5, TimeUnit.SECONDS)
     }
 
 }

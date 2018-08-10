@@ -23,7 +23,7 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/updates', function (updateMessage) {
+        stompClient.subscribe('/notifier/updates', function (updateMessage) {
             showCryptoUpdates(updateMessage.body);
         });
         requestServerForUpdates();

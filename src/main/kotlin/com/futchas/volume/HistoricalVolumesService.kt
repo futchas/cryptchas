@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service
 @Service
 class HistoricalVolumesService {
 
-    fun isUnusualVolume(percentageDifference: Double) :Boolean {
+    fun isUnusualVolume(percentageDifference: Double): Boolean {
         val unusualVolumePercentage = 30
-        if(percentageDifference > unusualVolumePercentage)
+        if (percentageDifference > unusualVolumePercentage)
             return true
 //        else if(abs(percentageDifference) > unusualVolumePercentage)
 //            return true
@@ -15,7 +15,7 @@ class HistoricalVolumesService {
         return false
     }
 
-    fun getVolumeDifference(globalVolumes1h: HistoricalVolumes, globalVolumes24h: HistoricalVolumes) : Double {
+    fun getVolumeDifference(globalVolumes1h: HistoricalVolumes, globalVolumes24h: HistoricalVolumes): Double {
         val average24hVolume = globalVolumes24h.values.average()
         val average1hVolume = globalVolumes1h.values.sum()
 

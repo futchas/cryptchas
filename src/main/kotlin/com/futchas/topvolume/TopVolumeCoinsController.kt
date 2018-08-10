@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class TopVolumeCoinsController (private val restTemplate: RestTemplate) {
+class TopVolumeCoinsController(private val restTemplate: RestTemplate) {
 
     private val logger = LoggerFactory.getLogger(TopVolumeCoinsController::class.java)
 
@@ -28,10 +28,10 @@ class TopVolumeCoinsController (private val restTemplate: RestTemplate) {
                     ?: throw RuntimeException("Top volume coin Service is null! Data from API couldn't be retrieved")
 
             logger.info(topVolumeCoins.topCoins.toString())
-            val currency = topVolumeCoins.topCoins[volumeRank-1]
+            val currency = topVolumeCoins.topCoins[volumeRank - 1]
 
             val message = "Volume of ${currency.name} is ${currency.volume}"
-            messagingTemplate.convertAndSend("/topic/updates", message)
+            messagingTemplate.convertAndSend("/notifier/updates", message)
         }
     }
 
@@ -40,8 +40,7 @@ class TopVolumeCoinsController (private val restTemplate: RestTemplate) {
 //    @SendTo(sendEndpoint)
 //    @GetMapping("/top-volume-coins")
     fun topVolumeCoins(volumeRank: String) {
-        if(volumeRank.toInt() > 0)
-//            scheduledFuture = taskScheduler.scheduleAtFixedRate(sendUpdateToClient(volumeRank.toInt()), 5000)
+        if (volumeRank.toInt() > 0)
             scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(volumeRank.toInt()), 1, 5, TimeUnit.SECONDS)
     }
 
