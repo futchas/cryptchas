@@ -41,13 +41,15 @@ function disconnect() {
 }
 
 function requestServerForUpdates() {
-    stompClient.send("/app/top-volume-coins", {}, "1");
-    stompClient.send("/app/volumes", {}, "");
+//    stompClient.send("/app/top-volume-coins", {}, "1");
+//    stompClient.send("/app/volumes", {}, "");
+    stompClient.send("/app/global-market-cap", {}, "");
+    stompClient.send("/app/prices", {}, "");
 }
 
 function showCryptoUpdates(message) {
     $("#history").append("<tr><td>" + message + "</td></tr>");
-    sendDesktopNotification("jdfkdfjk");
+    sendDesktopNotification(message);
 }
 
 $(function () {
@@ -78,8 +80,8 @@ function requestDesktopNotificationPermission(){
 }
 
 function sendDesktopNotification(text) {
-    let notification = new Notification('Your Page Title', {
-      body: "the body sdsdsdsds" + text,
+    let notification = new Notification('News', {
+      body: text,
       tag: 'soManyNotification'
     });
     //’tag’ handles muti tab scenario i.e when multiple tabs are

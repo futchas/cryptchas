@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate
 import java.util.concurrent.ScheduledExecutorService
 
 @RestController
-class Cryptchas(private val restTemplate: RestTemplate) {
+class Cryptchas {
 
     private val logger = LoggerFactory.getLogger(Cryptchas::class.java)
 

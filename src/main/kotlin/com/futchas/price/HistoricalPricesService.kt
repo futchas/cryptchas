@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class HistoricalPricesService {
-    private val logger = LoggerFactory.getLogger(javaClass::class.java)
+    private val logger = LoggerFactory.getLogger(HistoricalPricesService::class.java)
 
-    fun getMessage(btcToUsdPrices: HistoricalPrices): String {
+    fun getMessage(closePrices: List<Double>): String {
         val percentageThreshold = 5
 
-        val minPrice = btcToUsdPrices.closePrices.min()
-        val maxPrice = btcToUsdPrices.closePrices.max()
+        val minPrice = closePrices.min()
+        val maxPrice = closePrices.max()
 
         if (minPrice != null && maxPrice != null) {
 
@@ -19,9 +19,10 @@ class HistoricalPricesService {
             val percentageDifference = priceDifference / minPrice * 100
             if (percentageDifference > percentageThreshold)
                 return "In the last 10min the price changed $percentageDifference% ($priceDifference)"
-        }
-
-        logger.error("Can't get lowest or highest price!")
+            else
+                logger.info("Price change $percentageDifference% ($priceDifference)")
+        } else
+            logger.error("Can't get lowest or highest price!")
         return ""
     }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 @RestController
 class HistoricalPricesController(private val restTemplate: RestTemplate) {
 
-    private val logger = LoggerFactory.getLogger(javaClass::class.java)
+    private val logger = LoggerFactory.getLogger(HistoricalPricesController::class.java)
 
     @Autowired
     lateinit var messagingTemplate: SimpMessagingTemplate
@@ -28,21 +28,23 @@ class HistoricalPricesController(private val restTemplate: RestTemplate) {
     private fun sendUpdateToClient(): Runnable {
         return Runnable {
             val btcToUsdGlobalPrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/histominute?fsym=BTC&tsym=USD&limit=10", HistoricalPrices::class.java)
-                    ?: throw RuntimeException("Historical Prices Service is null! Data from API couldn't be retrieved")
+//                    ?: throw RuntimeException("Historical Prices Service is null! Data from API couldn't be retrieved")
 //            val btcToUsdBinancePrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/data/histominute?fsym=BTC&tsym=USDT&limit=10&e=Binance", HistoricalPrices::class.java)
 
-            logger.info(btcToUsdGlobalPrices.closePrices.toString())
-
-            val message = service.getMessage(btcToUsdGlobalPrices)
-
-            if (message != "")
-                messagingTemplate.convertAndSend("/notifier/updates", message)
+            val closePrices = btcToUsdGlobalPrices?.closePrices
+            if (closePrices != null) {
+                val message = service.getMessage(closePrices)
+                if (message != "") {
+                    logger.info(message)
+                    messagingTemplate.convertAndSend("/notifier/updates", message)
+                }
+            }
         }
     }
 
 
     @MessageMapping("/prices")
-//    @GetMapping("/prices")
+//  // @GetMapping("/prices")
     fun prices() {
         scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 10, TimeUnit.SECONDS)
     }
