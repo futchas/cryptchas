@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 @Service
 class GlobalMarketCapService {
 
-    fun getTrend(marketCap: GlobalMarketCap): String {
+    fun compareMonthlyToYearlyTrend(marketCap: GlobalMarketCap): String {
 
         val monthlyHigh = marketCap.marketCapLast1mHigh
         val monthlyLow = marketCap.marketCapLast1mLow

@@ -15,17 +15,27 @@ function setConnected(connected) {
 
 function connect() {
     socket = new SockJS('/cryptchas-websocket');
-    socket.onclose = function(event) {
+    socket.onclose = (event) => {
     alert("Server Disconnect You");
       console.log("WebSocket is closed now.");
     };
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    stompClient.connect({}, (frame) => {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/notifier/updates', function (updateMessage) {
-            showCryptoUpdates(updateMessage.body);
+        stompClient.subscribe('/notifier/updates', (updateMessage) => showCryptoUpdates(updateMessage.body));
+
+        stompClient.subscribe('/notifier/info', (marketInfo) => {
+            console.log("Market cap: " + marketInfo.body)
+            let responseBody = JSON.parse(marketInfo.body)
+            console.log("Market cap: " + responseBody.totalMarketCap)
+            $("#totalMarketCap").text("Market cap: " + responseBody.totalMarketCap);
+            $("#totalVolume24h").text("24h Vol " + responseBody.totalVolume24h);
+            $("#btcDominance").text("BTC Dominance " + responseBody.btcDominance);
+            $("#amountCryptoCurrencies").text("Cryptos " + responseBody.amountCryptoCurrencies);
         });
+
+        setInterval(() => stompClient.send("/app/global-market-info", {}, ""), 5000);
         requestServerForUpdates();
         sendDesktopNotification();
     });
@@ -43,6 +53,7 @@ function disconnect() {
 function requestServerForUpdates() {
 //    stompClient.send("/app/top-volume-coins", {}, "1");
 //    stompClient.send("/app/volumes", {}, "");
+    stompClient.send("/app/global-market-info", {}, "");
     stompClient.send("/app/global-market-cap", {}, "");
     stompClient.send("/app/prices", {}, "");
 }
@@ -53,17 +64,15 @@ function showCryptoUpdates(message) {
 }
 
 $(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
+    $("form").on('submit', (e) => e.preventDefault());
 
     requestDesktopNotificationPermission();
     connect();
 
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
+    $( "#connect" ).click(() => connect());
+    $( "#disconnect" ).click(() => disconnect());
 
-    window.addEventListener("beforeunload", function (event) {
+    window.addEventListener("beforeunload", (event) => {
       disconnect();
       event.preventDefault();
     });
@@ -71,7 +80,7 @@ $(function () {
 
 function requestDesktopNotificationPermission(){
  if(Notification && Notification.permission === 'default') {
-   Notification.requestPermission(function (permission) {
+   Notification.requestPermission((permission) => {
       if(!('permission' in Notification)) {
         Notification.permission = permission;
       }

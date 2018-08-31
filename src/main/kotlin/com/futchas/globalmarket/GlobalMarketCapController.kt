@@ -30,15 +30,7 @@ class GlobalMarketCapController(private val restTemplate: RestTemplate) {
     //    @GetMapping("/global-market-cap")
     @MessageMapping("/global-market-cap")
     fun globalMarket() {
-
         scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 0, 10, TimeUnit.SECONDS)
-
-//        val now = LocalDateTime.now()
-//        var lastYear = now.minusYears(1)
-//        val nowEpoch = now.atZone(ZoneId.systemDefault()).toEpochSecond()
-//        val lastYearEpoch = lastYear.atZone(ZoneId.systemDefault()).toEpochSecond()
-//        val timestampNow = System.currentTimeMillis() / 1000
-
     }
 
     private fun sendUpdateToClient(): Runnable {
@@ -48,17 +40,12 @@ class GlobalMarketCapController(private val restTemplate: RestTemplate) {
             val nowEpoch = epochWith3TrailingZeros(now)
             val lastYearEpoch = epochWith3TrailingZeros(now.minus(365, ChronoUnit.DAYS))
 
-//        println("localdatetime " + LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond())
-//        println("currenttimemillis " + System.currentTimeMillis() / 1000)
-//        println("Instant " + Instant.now().toEpochMilli() / 1000)
+            logger.info("Call ${CryptoApiProvider.COINMARKETCAP.value}/global/marketcap-total/$lastYearEpoch/$nowEpoch/")
 
-            println("urlglobal ${CryptoApiProvider.COINMARKETCAP.value}/global/marketcap-total/$lastYearEpoch/$nowEpoch/")
-//        val globalMarket = restTemplate.getForObject("${CryptoApiProvider.COINMARKETCAP.value}/global/", GlobalMarket::class.java)
-//                ?: throw RuntimeException("Historical Prices Service is null! Data from API couldn't be retrieved")
-            val marketCap = restTemplate.getForObject("${CryptoApiProvider.COINMARKETCAP.value}/global/marketcap-total/$lastYearEpoch/$nowEpoch/", GlobalMarketCap::class.java)
+            val marketCap = restTemplate.getForObject("${CryptoApiProvider.COINMARKETCAP_UNOFFICIAL.value}/global/marketcap-total/$lastYearEpoch/$nowEpoch/", GlobalMarketCap::class.java)
 
             if(marketCap != null) {
-                val message = service.getTrend(marketCap)
+                val message = service.compareMonthlyToYearlyTrend(marketCap)
                 logger.info(message)
                 messagingTemplate.convertAndSend("/notifier/updates", message)
             }
@@ -68,6 +55,7 @@ class GlobalMarketCapController(private val restTemplate: RestTemplate) {
 
     /**
      * For some reason the coinmarketcap endpoint (non official API) needs 3 trailing zeros
+     * e.g. https://graphs2.coinmarketcap.com/global/marketcap-total/1502976348000/1534512348000/
      */
     fun epochWith3TrailingZeros(timeInstant: Instant): String {
         return "${timeInstant.toEpochMilli() / 1000}000"

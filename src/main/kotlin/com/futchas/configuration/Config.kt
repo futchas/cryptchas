@@ -19,7 +19,7 @@ class Config {
 
     @Bean
     fun scheduledExecutorService(): ScheduledExecutorService {
-        return Executors.newScheduledThreadPool(10)
+        return Executors.newScheduledThreadPool(50)
     }
 
 }

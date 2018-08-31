@@ -2,8 +2,8 @@ package com.futchas.globalmarket
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class GlobalMarket(private var totalMarketCap: Double, private var totalVolume24h: Double,
-                   private var btcDominance: Double, private var amountCryptoCurrencies: Int) {
+class GlobalMarketInfo(var totalMarketCap: Double, var totalVolume24h: Double,
+                       var btcDominance: Double, var amountCryptoCurrencies: Int) {
 
     @JsonProperty("data")
     private fun getGlobalMarket(data: Map<String, Any>) {
@@ -17,8 +17,7 @@ class GlobalMarket(private var totalMarketCap: Double, private var totalVolume24
     }
 
     override fun toString(): String {
-        return "GlobalMarket(totalMarketCap=$totalMarketCap, totalVolume24h=$totalVolume24h, btcDominance=$btcDominance, amountCryptoCurrencies=$amountCryptoCurrencies)"
+        return "GlobalMarketInfo(totalMarketCap=$totalMarketCap, totalVolume24h=$totalVolume24h, btcDominance=$btcDominance, amountCryptoCurrencies=$amountCryptoCurrencies)"
     }
-
 
 }
