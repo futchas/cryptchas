@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 import java.util.concurrent.ScheduledExecutorService
@@ -24,6 +23,12 @@ class HistoricalVolumeController(private val restTemplate: RestTemplate) {
 
     @Autowired
     lateinit var service: HistoricalVolumesService
+
+    @MessageMapping("/volumes")
+//    @GetMapping("/volumes")
+    fun volumes() {
+        scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 5, TimeUnit.SECONDS)
+    }
 
     private fun sendUpdateToClient(): Runnable {
 
@@ -48,11 +53,6 @@ class HistoricalVolumeController(private val restTemplate: RestTemplate) {
         }
     }
 
-    @MessageMapping("/volumes")
-//    @GetMapping("/volumes")
-    fun volumes() {
-        scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 5, TimeUnit.SECONDS)
-    }
 
 }
 

@@ -66,6 +66,9 @@ class GlobalMarketCapController(private val restTemplate: RestTemplate) {
         }
     }
 
+    /**
+     * For some reason the coinmarketcap endpoint (non official API) needs 3 trailing zeros
+     */
     fun epochWith3TrailingZeros(timeInstant: Instant): String {
         return "${timeInstant.toEpochMilli() / 1000}000"
     }

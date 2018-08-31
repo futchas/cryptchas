@@ -22,6 +22,14 @@ class TopVolumeCoinsController(private val restTemplate: RestTemplate) {
     @Autowired
     lateinit var scheduledExecutorService: ScheduledExecutorService
 
+    @MessageMapping("/top-volume-coins")
+//    @SendTo(sendEndpoint)
+//    @GetMapping("/top-volume-coins")
+    fun topVolumeCoins(volumeRank: String) {
+        if (volumeRank.toInt() > 0)
+            scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(volumeRank.toInt()), 1, 5, TimeUnit.SECONDS)
+    }
+
     private fun sendUpdateToClient(volumeRank: Int): Runnable {
         return Runnable {
             val topVolumeCoins = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/top/volumes?tsym=BTC", TopVolumeCoins::class.java)
@@ -35,14 +43,6 @@ class TopVolumeCoinsController(private val restTemplate: RestTemplate) {
         }
     }
 
-
-    @MessageMapping("/top-volume-coins")
-//    @SendTo(sendEndpoint)
-//    @GetMapping("/top-volume-coins")
-    fun topVolumeCoins(volumeRank: String) {
-        if (volumeRank.toInt() > 0)
-            scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(volumeRank.toInt()), 1, 5, TimeUnit.SECONDS)
-    }
 
 //    private fun printVolumes(topVolumeCoins: TopVolumeCoins) {
 //

@@ -25,6 +25,13 @@ class HistoricalPricesController(private val restTemplate: RestTemplate) {
     @Autowired
     lateinit var service: HistoricalPricesService
 
+    @MessageMapping("/prices")
+//  // @GetMapping("/prices")
+    fun prices() {
+        scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 10, TimeUnit.SECONDS)
+    }
+
+
     private fun sendUpdateToClient(): Runnable {
         return Runnable {
             val btcToUsdGlobalPrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/histominute?fsym=BTC&tsym=USD&limit=10", HistoricalPrices::class.java)
@@ -42,12 +49,6 @@ class HistoricalPricesController(private val restTemplate: RestTemplate) {
         }
     }
 
-
-    @MessageMapping("/prices")
-//  // @GetMapping("/prices")
-    fun prices() {
-        scheduledExecutorService.scheduleAtFixedRate(sendUpdateToClient(), 1, 10, TimeUnit.SECONDS)
-    }
 
 }
 
