@@ -1,8 +1,6 @@
-import com.sun.org.apache.xalan.internal.xsltc.trax.Util
-
 buildscript {
     ext {
-        kotlinVersion = '1.2.51'
+        kotlinVersion = '1.2.61'
         springBootVersion = '2.0.3.RELEASE'
     }
     repositories {
@@ -39,7 +37,7 @@ idea {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    compile ("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     compile("org.jetbrains.kotlin:kotlin-reflect")
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
