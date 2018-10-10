@@ -40,10 +40,18 @@ class HistoricalPricesController(private val restTemplate: RestTemplate) {
 
             val closePrices = btcToUsdGlobalPrices?.closePrices
             if (closePrices != null) {
-                val message = service.getMessage(closePrices)
-                if (message != "") {
-                    logger.info(message)
-                    messagingTemplate.convertAndSend("/notifier/updates", message)
+                val message = service.getSignificantChanges(closePrices)
+                val rsiLevel = service.getSignificantRSILevel(closePrices)
+
+                when {
+                    message != "" -> {
+                        logger.info(message)
+                        messagingTemplate.convertAndSend("/notifier/updates", message)
+                    }
+                    rsiLevel != "" -> {
+                        logger.info(rsiLevel)
+                        messagingTemplate.convertAndSend("/notifier/updates", rsiLevel)
+                    }
                 }
             }
         }
