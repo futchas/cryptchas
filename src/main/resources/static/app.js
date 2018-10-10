@@ -30,9 +30,9 @@ function connect() {
             let responseBody = JSON.parse(marketInfo.body)
             console.log("Market cap: " + responseBody.totalMarketCap)
             $("#totalMarketCap").text("Market cap: " + responseBody.totalMarketCap);
-            $("#totalVolume24h").text("24h Vol " + responseBody.totalVolume24h);
-            $("#btcDominance").text("BTC Dominance " + responseBody.btcDominance);
-            $("#amountCryptoCurrencies").text("Cryptos " + responseBody.amountCryptoCurrencies);
+            $("#totalVolume24h").text("24h Vol: " + responseBody.totalVolume24h);
+            $("#btcDominance").text("BTC Dominance: " + responseBody.btcDominance);
+            $("#amountCryptoCurrencies").text("Cryptos: " + responseBody.amountCryptoCurrencies);
         });
 
         setInterval(() => stompClient.send("/app/global-market-info", {}, ""), 5000);

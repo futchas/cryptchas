@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Cryptchas Analyser</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -15,22 +15,26 @@
     Javascript and reload this page!</h2></noscript>
 <div id="main-content" class="container">
     <div class="row">
-        <div class="col-md-12">
-            <label id="totalMarketCap"></label>
-            <label id="totalVolume24h"></label>
-            <label id="btcDominance"></label>
-            <label id="amountCryptoCurrencies"></label>
-        </div>
+        <div class="col-md-3"><label id="totalMarketCap"></label></div>
+        <div class="col-md-3"><label id="totalVolume24h"></label></div>
+        <div class="col-md-3"><label id="btcDominance"></label></div>
+        <div class="col-md-3"><label id="amountCryptoCurrencies"></label></div>
     </div>
+    <hr class="mb-3">
     <div class="row">
-        <div class="col-md-6">
+        <h1>Crypto notifications and alert system</h1>
+    </div>
+    <hr class="mb-3">
+    <div class="row">
+        <div class="col-md-12">
             <form class="form-inline">
-                <div class="form-group">
-                    <label for="connect">Crypto analysis:</label>
-                    <button id="connect" class="btn btn-default" type="submit">Get updates</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Stop
-                    </button>
-                </div>
+                <!--<div class="form-group">-->
+                    <div class="col-md-3"><label for="connect">Crypto notifications</label></div>
+                    <div class="col-md-3">
+                        <button id="connect" class="btn btn-default" type="submit">Get updates</button>
+                        <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Stop</button>
+                    </div>
+                <!--</div>-->
             </form>
         </div>
     </div>
