@@ -2,7 +2,6 @@ package com.futchas.topvolume
 
 import com.futchas.CryptoApiProvider
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.RestController
@@ -12,15 +11,11 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class TopVolumeCoinsController(private val restTemplate: RestTemplate) {
+class TopVolumeCoinsController(private val restTemplate: RestTemplate,
+                               val messagingTemplate: SimpMessagingTemplate,
+                               val scheduledExecutorService: ScheduledExecutorService) {
 
     private val logger = LoggerFactory.getLogger(TopVolumeCoinsController::class.java)
-
-    @Autowired
-    lateinit var messagingTemplate: SimpMessagingTemplate
-
-    @Autowired
-    lateinit var scheduledExecutorService: ScheduledExecutorService
 
     @MessageMapping("/top-volume-coins")
 //    @SendTo(sendEndpoint)

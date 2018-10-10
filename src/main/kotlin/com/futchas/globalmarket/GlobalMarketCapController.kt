@@ -2,7 +2,6 @@ package com.futchas.globalmarket
 
 import com.futchas.CryptoApiProvider
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.web.bind.annotation.RestController
@@ -14,18 +13,12 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class GlobalMarketCapController(private val restTemplate: RestTemplate) {
+class GlobalMarketCapController(private val restTemplate: RestTemplate,
+                                val messagingTemplate: SimpMessagingTemplate,
+                                val scheduledExecutorService: ScheduledExecutorService,
+                                val service: GlobalMarketCapService) {
 
     private val logger = LoggerFactory.getLogger(GlobalMarketCapController::class.java)
-
-    @Autowired
-    lateinit var messagingTemplate: SimpMessagingTemplate
-
-    @Autowired
-    lateinit var scheduledExecutorService: ScheduledExecutorService
-
-    @Autowired
-    lateinit var service: GlobalMarketCapService
 
     //    @GetMapping("/global-market-cap")
     @MessageMapping("/global-market-cap")

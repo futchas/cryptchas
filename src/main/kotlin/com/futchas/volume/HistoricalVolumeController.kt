@@ -12,17 +12,12 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class HistoricalVolumeController(private val restTemplate: RestTemplate) {
+class HistoricalVolumeController(private val restTemplate: RestTemplate,
+                                 val messagingTemplate: SimpMessagingTemplate,
+                                 val scheduledExecutorService: ScheduledExecutorService,
+                                 val service: HistoricalVolumesService) {
 
     private val logger = LoggerFactory.getLogger(HistoricalVolumeController::class.java)
-    @Autowired
-    lateinit var messagingTemplate: SimpMessagingTemplate
-
-    @Autowired
-    lateinit var scheduledExecutorService: ScheduledExecutorService
-
-    @Autowired
-    lateinit var service: HistoricalVolumesService
 
     @MessageMapping("/volumes")
 //    @GetMapping("/volumes")
