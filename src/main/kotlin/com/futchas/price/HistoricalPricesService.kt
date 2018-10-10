@@ -10,10 +10,10 @@ class HistoricalPricesService {
 
     fun getSignificantChanges(closePrices: List<Double>): String {
         return """${getSignificantPriceChange(closePrices)}
-                  ${getSignificantRSILevel(closePrices)}""".trimIndent()
+                  ${getSignificantRSILevel(closePrices)}""".trimIndent().trim()
     }
 
-    private fun getSignificantPriceChange(closePrices: List<Double>): String {
+    fun getSignificantPriceChange(closePrices: List<Double>): String {
 
         val percentageThreshold = 5
         val (priceDifference, percentageDifference) = PriceChangeCalculator().calculate(closePrices)
@@ -21,17 +21,21 @@ class HistoricalPricesService {
         logger.info("Price change $percentageDifference% ($priceDifference)")
 
         return if (percentageDifference > percentageThreshold)
-            "In the last 10min the price changed $percentageDifference% ($priceDifference)"
+            "In the last 15min the price changed $percentageDifference% ($priceDifference)"
         else ""
     }
 
     fun getSignificantRSILevel(closePrices: List<Double>): String {
-        val rsi = RSI().calculate(closePrices)
         var significantMessage = ""
-        when {
-            rsi > 70 -> significantMessage = "RSI level increased to $rsi"
-            rsi < 30 -> significantMessage = "RSI level decreased to $rsi"
-        }
+        val priceListSize = closePrices.size
+        if(priceListSize > 14) {
+            val rsi = RSI().calculate(closePrices)
+            when {
+                rsi > 70 -> significantMessage = "RSI level increased to $rsi"
+                rsi < 30 && rsi > 0 -> significantMessage = "RSI level decreased to $rsi"
+            }
+        } else
+            logger.error("Not enough price data available to calculate the RSI! Current size is only $priceListSize and should be at least 15")
 
         return significantMessage
     }

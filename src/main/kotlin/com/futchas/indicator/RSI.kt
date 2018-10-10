@@ -11,11 +11,6 @@ class RSI {
         val priceListSize = closePrices.size
         val lastPriceIndex = priceListSize - 1
         val firstPriceIndex = priceListSize - period
-        if (firstPriceIndex < 0) {
-            val message = "Not enough price data available to calculate the RSI! Current size is only $priceListSize and should be at least 15"
-            logger.error(message)
-            throw RuntimeException(message)
-        }
 
         var sumGains = 0.0
         var sumLoss = 0.0

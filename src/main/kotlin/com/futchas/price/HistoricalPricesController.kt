@@ -12,18 +12,13 @@ import java.util.concurrent.TimeUnit
 
 
 @RestController
-class HistoricalPricesController(private val restTemplate: RestTemplate) {
+class HistoricalPricesController(private val restTemplate: RestTemplate,
+                                 val messagingTemplate: SimpMessagingTemplate,
+                                 val scheduledExecutorService: ScheduledExecutorService,
+                                 val service: HistoricalPricesService) {
 
     private val logger = LoggerFactory.getLogger(HistoricalPricesController::class.java)
 
-    @Autowired
-    lateinit var messagingTemplate: SimpMessagingTemplate
-
-    @Autowired
-    lateinit var scheduledExecutorService: ScheduledExecutorService
-
-    @Autowired
-    lateinit var service: HistoricalPricesService
 
     @MessageMapping("/prices")
 //  // @GetMapping("/prices")
@@ -34,25 +29,20 @@ class HistoricalPricesController(private val restTemplate: RestTemplate) {
 
     private fun sendUpdateToClient(): Runnable {
         return Runnable {
-            val btcToUsdGlobalPrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/histominute?fsym=BTC&tsym=USD&limit=10", HistoricalPrices::class.java)
+            // one value is 1 minute, limit=15 means 15min each minute 1 value
+            val btcToUsdGlobalPrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/histominute?fsym=BTC&tsym=USD&limit=15", HistoricalPrices::class.java)
 //                    ?: throw RuntimeException("Historical Prices Service is null! Data from API couldn't be retrieved")
 //            val btcToUsdBinancePrices = restTemplate.getForObject("${CryptoApiProvider.CRYPTO_COMPARE.value}/data/histominute?fsym=BTC&tsym=USDT&limit=10&e=Binance", HistoricalPrices::class.java)
 
             val closePrices = btcToUsdGlobalPrices?.closePrices
             if (closePrices != null) {
                 val message = service.getSignificantChanges(closePrices)
-                val rsiLevel = service.getSignificantRSILevel(closePrices)
 
-                when {
-                    message != "" -> {
-                        logger.info(message)
-                        messagingTemplate.convertAndSend("/notifier/updates", message)
-                    }
-                    rsiLevel != "" -> {
-                        logger.info(rsiLevel)
-                        messagingTemplate.convertAndSend("/notifier/updates", rsiLevel)
-                    }
+                if(message.isNotBlank()){
+                    logger.info(message)
+                    messagingTemplate.convertAndSend("/notifier/updates", message)
                 }
+
             }
         }
     }
